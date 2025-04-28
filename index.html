@@ -6,76 +6,89 @@
     <title>Custom Map with Leaflet</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
-        /* Make the map fill the full page */
-        html, body {
-            height: 100%;
-            margin: 0;
-        }
-        #map {
-            width: 100%;
-            height: 100%;
-        }
+        html, body { height: 100%; margin: 0; }
+        #map { width: 100%; height: 100%; }
     </style>
 </head>
 <body>
 
 <div id="map"></div>
-<!-- Leaflet.js library -->
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script>    // 0. Initialize the map
-    var map = L.map('map').setView([18.6, 73], 7); // Maharashtra zoomed out
 
-    // 2. Add OpenStreetMap base layer
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    // 0. Initialize map
+    var map = L.map('map').setView([18.6, 73], 7); // Maharashtra centered
+
+    // 1. Add OpenStreetMap base layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-// 1. Load Maharashtra boundaries
-var maharashtraLayer = L.geoJSON(districtGeojson, {
-    onEachFeature: function(feature, layer) {
-        layer.bindPopup(feature.properties.DISTRICT); // Show district name
-        layer.on('click', function() {
-            if (feature.properties.DISTRICT === 'Raigarh') {
-                loadRaigadBlocks(); // Load blocks inside Raigad
-            }
-        });
-    }
-}).addTo(map);
+    var maharashtraLayer;
+    var raigadBlocksLayer;
 
-// 2. Function to load Raigad Blocks
-function loadRaigadBlocks() {
-    // Remove Maharashtra layer
-    map.removeLayer(maharashtraLayer);
-
-    // Load Raigad Blocks (another GeoJSON)
-    var raigadBlocksLayer = L.geoJSON(raigah_subdistrictGeojson, {
-        onEachFeature: function(feature, layer) {
-            layer.bindPopup(feature.properties.Sub_dist);
-            layer.on('click', function() {
-                if (feature.properties.Sub_dist === 'MURUD') {
-                    showMurudMap();
+    // 2. Load Maharashtra districts GeoJSON
+    fetch('district.json') // <-- Put correct file name
+        .then(response => response.json())
+        .then(district => {
+            maharashtraLayer = L.geoJSON(district, {
+                onEachFeature: function(feature, layer) {
+                    layer.bindPopup(feature.properties.DISTRICT);
+                    layer.on('click', function() {
+                        if (feature.properties.DISTRICT === 'Raigarh') { // Be careful with spelling!
+                            loadRaigadBlocks();
+                        }
+                    });
+                },
+                style: {
+                    color: "blue",
+                    weight: 2,
+                    fillOpacity: 0.1
                 }
+            }).addTo(map);
+        });
+
+    // 3. Function to load Raigad Blocks
+    function loadRaigadBlocks() {
+        if (maharashtraLayer) {
+            map.removeLayer(maharashtraLayer);
+        }
+
+        fetch('raigah_subdistrict.json') // <-- Put correct file name
+            .then(response => response.json())
+            .then(raigah_subdistrict => {
+                raigadBlocksLayer = L.geoJSON(raigah_subdistrict, {
+                    onEachFeature: function(feature, layer) {
+                        layer.bindPopup(feature.properties.Sub_dist);
+                        layer.on('click', function() {
+                            if (feature.properties.Sub_dist === 'MURUD') {
+                                showMurudMap();
+                            }
+                        });
+                    },
+                    style: {
+                        color: "green",
+                        weight: 1,
+                        fillOpacity: 0.2
+                    }
+                }).addTo(map);
             });
-        }
-    }).addTo(map);
-}
+    }
 
-// 3. Function to show custom Murud map
-function showMurudMap() {
-    // Remove blocks layer (optional)
-    map.eachLayer(function (layer) {
-        if (layer instanceof L.GeoJSON) {
-            map.removeLayer(layer);
+    // 4. Function to show Murud image map
+    function showMurudMap() {
+        if (raigah_subdistrict) {
+            map.removeLayer(raigadBlocksLayer);
         }
-    });
 
-    var murudImageBounds = [
-        [18.327, 72.927],
-        [18.317, 72.937]
-    ];
-    L.imageOverlay('your-murud-map.png', murudImageBounds).addTo(map);
-    map.fitBounds(murudImageBounds);
-}
+        var murudImageBounds = [
+            [18.327, 72.927],
+            [18.317, 72.937]
+        ];
+        L.imageOverlay('padmadurga.jpg', murudImageBounds).addTo(map);
+        map.fitBounds(murudImageBounds);
+    }
+
 </script>
 
 </body>
