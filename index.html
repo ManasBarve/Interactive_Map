@@ -28,7 +28,7 @@
     var raigadBlocksLayer;
 
     // 2. Load Maharashtra districts GeoJSON
-    fetch('district.json') // <-- Put correct file name
+    fetch('district.geojson') // <-- Put correct file name
         .then(response => response.json())
         .then(district => {
             maharashtraLayer = L.geoJSON(district, {
@@ -54,7 +54,7 @@
             map.removeLayer(maharashtraLayer);
         }
 
-        fetch('raigah_subdistrict.json') // <-- Put correct file name
+        fetch('raigarh_subdistrict.geojson') // <-- Put correct file name
             .then(response => response.json())
             .then(raigah_subdistrict => {
                 raigadBlocksLayer = L.geoJSON(raigah_subdistrict, {
@@ -85,7 +85,7 @@
             [18.327, 72.927],
             [18.317, 72.937]
         ];
-        L.imageOverlay('padmadurga.jpg', murudImageBounds).addTo(map);
+        L.imageOverlay('padmadurga.jpeg', murudImageBounds).addTo(map);
         map.fitBounds(murudImageBounds);
     }
 
