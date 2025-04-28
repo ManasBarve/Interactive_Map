@@ -1,4 +1,28 @@
-// 0. Initialize the map
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Map with Leaflet</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        /* Make the map fill the full page */
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+<!-- Leaflet.js library -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>    // 0. Initialize the map
     var map = L.map('map').setView([18.6, 73], 7); // Maharashtra zoomed out
 
     // 2. Add OpenStreetMap base layer
@@ -52,3 +76,7 @@ function showMurudMap() {
     L.imageOverlay('your-murud-map.png', murudImageBounds).addTo(map);
     map.fitBounds(murudImageBounds);
 }
+</script>
+
+</body>
+</html>
