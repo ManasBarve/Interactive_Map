@@ -1,0 +1,46 @@
+// 1. Load Maharashtra boundaries
+var maharashtraLayer = L.geoJSON(districtGeojson, {
+    onEachFeature: function(feature, layer) {
+        layer.bindPopup(feature.properties.DISTRICT); // Show district name
+        layer.on('click', function() {
+            if (feature.properties.DISTRICT === 'Raigarh') {
+                loadRaigadBlocks(); // Load blocks inside Raigad
+            }
+        });
+    }
+}).addTo(map);
+
+// 2. Function to load Raigad Blocks
+function loadRaigadBlocks() {
+    // Remove Maharashtra layer
+    map.removeLayer(maharashtraLayer);
+
+    // Load Raigad Blocks (another GeoJSON)
+    var raigadBlocksLayer = L.geoJSON(raigah_subdistrictGeojson, {
+        onEachFeature: function(feature, layer) {
+            layer.bindPopup(feature.properties.Sub_dist);
+            layer.on('click', function() {
+                if (feature.properties.Sub_dist === 'MURUD') {
+                    showMurudMap();
+                }
+            });
+        }
+    }).addTo(map);
+}
+
+// 3. Function to show custom Murud map
+function showMurudMap() {
+    // Remove blocks layer (optional)
+    map.eachLayer(function (layer) {
+        if (layer instanceof L.GeoJSON) {
+            map.removeLayer(layer);
+        }
+    });
+
+    var murudImageBounds = [
+        [18.327, 72.927],
+        [18.317, 72.937]
+    ];
+    L.imageOverlay('your-murud-map.png', murudImageBounds).addTo(map);
+    map.fitBounds(murudImageBounds);
+}
