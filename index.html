@@ -38,7 +38,7 @@
                         map.fitBounds(bounds); // Zoom into the clicked district
                         
                         if (feature.properties.DISTRICT === 'Raigarh' || feature.properties.DISTRICT === 'Raigarh') {
-                            loadRaigadBlocks();
+                            loadRaigarhBlocks();
                         }
                     });
                 },
@@ -64,7 +64,7 @@
         fetch('raigarh_subdistrict.geojson')
             .then(response => response.json())
             .then(raigarh_subdistrict => {
-                raigadBlocksLayer = L.geoJSON(raigarh_subdistrict, {
+                raigarhBlocksLayer = L.geoJSON(raigarh_subdistrict, {
                     onEachFeature: function(feature, layer) {
                         layer.bindPopup(feature.properties.Sub_dist);
                         layer.on('click', function(e) {
